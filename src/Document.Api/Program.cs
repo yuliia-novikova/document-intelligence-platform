@@ -36,7 +36,7 @@ builder.Services.Configure<LocalFileStorageOptions>(
 // Scoped to match DbContext's default scoped lifetime - a singleton here would capture a scoped
 // DbContext instance for the lifetime of the app (a captive-dependency bug).
 builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
-builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
+builder.Services.AddScoped<IObjectStorage, LocalFileStorage>();
 builder.Services.AddScoped<IDocumentUploadValidator, DocumentUploadValidator>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 
