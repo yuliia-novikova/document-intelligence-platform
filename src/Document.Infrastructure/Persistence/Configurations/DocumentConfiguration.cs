@@ -22,7 +22,7 @@ public sealed class DocumentConfiguration : IEntityTypeConfiguration<Domain.Enti
             .IsRequired()
             .HasMaxLength(128);
 
-        builder.Property(d => d.StoragePath)
+        builder.Property(d => d.StorageKey)
             .IsRequired()
             .HasMaxLength(1024);
 
