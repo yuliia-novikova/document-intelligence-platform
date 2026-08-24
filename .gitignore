@@ -365,3 +365,6 @@ FodyWeavers.xsd
 # Local environment files (may contain secrets/credentials)
 .env
 !.env.example
+
+# Local file storage placeholder root (uploaded document bytes, not source)
+**/uploaded-documents/

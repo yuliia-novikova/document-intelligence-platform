@@ -1,5 +1,9 @@
+using Document.Api.Endpoints;
 using Document.Api.HealthChecks;
+using Document.Application.Abstractions;
+using Document.Application.Documents;
 using Document.Infrastructure.Persistence;
+using Document.Infrastructure.Storage;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -8,7 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -25,6 +28,18 @@ builder.Services.AddHealthChecks()
         failureStatus: HealthStatus.Unhealthy,
         tags: ["ready"]);
 
+builder.Services.Configure<DocumentUploadOptions>(
+    builder.Configuration.GetSection(DocumentUploadOptions.SectionName));
+builder.Services.Configure<LocalFileStorageOptions>(
+    builder.Configuration.GetSection(LocalFileStorageOptions.SectionName));
+
+// Scoped to match DbContext's default scoped lifetime - a singleton here would capture a scoped
+// DbContext instance for the lifetime of the app (a captive-dependency bug).
+builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
+builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
+builder.Services.AddScoped<IDocumentUploadValidator, DocumentUploadValidator>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -35,9 +50,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+// No authentication/authorization scheme is configured yet (tracked as a future integration -
+// Microsoft Entra ID / service-to-service auth), so UseAuthorization() is intentionally omitted:
+// calling it without AddAuthorization() registered throws at startup, and no endpoint currently
+// requires authorization.
 
-app.MapControllers();
+app.MapDocumentEndpoints();
 
 // Overall status: runs every registered check. Useful for dashboards/manual inspection.
 app.MapHealthChecks("/health", new HealthCheckOptions

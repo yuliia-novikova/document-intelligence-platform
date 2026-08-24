@@ -9,7 +9,7 @@
     <Project Path="src/Document.Processing/Document.Processing.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="Document.Application.Tests/Document.Application.Tests.csproj" />
-    <Project Path="Document.IntegrationTests/Document.IntegrationTests.csproj" />
+    <Project Path="tests/Document.Application.Tests/Document.Application.Tests.csproj" />
+    <Project Path="tests/Document.IntegrationTests/Document.IntegrationTests.csproj" />
   </Folder>
 </Solution>
